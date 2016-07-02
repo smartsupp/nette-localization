@@ -1,0 +1,21 @@
+{
+    "name": "smartsupp/localization",
+    "type": "library",
+    "keywords": ["localization", "nette"],
+    "authors": [{
+        "name": "Dusan Kmet",
+        "email": "dkmorlok@gmail.com"
+    }],
+    "description" : "Localization",
+    "version": "0.1",
+    "license": "",
+    "require": {
+        "php": ">=5.4.0",
+        "nette/di": "^2.3",
+        "nette/utils": "^2.3",
+        "nette/safe-stream": "^2.3"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}

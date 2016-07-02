@@ -1,1 +1,7 @@
-# nette-localization
+# Smartsupp/Localization
+
+## Installation 
+
+```sh
+$ composer require smartsupp/localization
+```
