@@ -7,7 +7,6 @@
         "email": "dkmorlok@gmail.com"
     }],
     "description" : "Localization",
-    "version": "0.1.1",
     "minimum-stability": "dev",
     "license": "",
     "require": {
@@ -18,5 +17,10 @@
     },
     "autoload": {
         "classmap": ["src/"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
     }
 }
