@@ -1,4 +1,4 @@
-# Smartsupp/Localization
+# nette-localization
 
 ## Installation 
 
