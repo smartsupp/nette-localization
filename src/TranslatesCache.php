@@ -76,7 +76,7 @@ class TranslatesCache
 	 */
 	public function save($translates)
 	{
-		if (preg_match('/^([^\-]+\-[^\-]+\-).*$/', $this->filename, $matches)) {
+		if (preg_match('/^([^_]+_[^_]+_).*$/', $this->filename, $matches)) {
 			foreach (scandir($this->tempDir) as $f) { // clean old
 				if ($f[0] != '.') {
 					if (strpos($f, $matches[1]) === 0) {

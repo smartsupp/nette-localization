@@ -55,14 +55,14 @@ class TranslatesLoader
 			mkdir($tempDir);
 		}
 
-		$cachedFile = $tempDir . '/' . $lang . '-' . $section . '.php';
+		$cachedFile = $tempDir . '/' . $lang . '_' . $section . '.php';
 		if (!$this->debugMode && is_file($cachedFile)) {
 			$translates = include $cachedFile;
 		} else {
 			// create cache
 			$cache = new TranslatesCache();
 			$cache->setTempDir($tempDir);
-			$cache->setFilename($lang . '-' . $section . ($this->debugMode ? '-' . md5($this->getLastChange($section, $lang, $defaultLang)) : '') . '.php');
+			$cache->setFilename($lang . '_' . $section . ($this->debugMode ? '_' . md5($this->getLastChange($section, $lang, $defaultLang)) : '') . '.php');
 			// build or load cached file
 			$translates = $cache->load();
 			if (!$translates) {
