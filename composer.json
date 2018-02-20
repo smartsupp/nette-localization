@@ -1,15 +1,10 @@
 {
     "name": "smartsupp/localization",
-    "type": "library",
-    "keywords": ["localization", "nette"],
+    "description" : "Localization loader for nette",
     "authors": [{
         "name": "Dusan Kmet",
-        "email": "dkmorlok@gmail.com"
+        "email": "morlokdk@gmail.com"
     }],
-    "description" : "Localization",
-    "version": "0.1.2",
-    "minimum-stability": "dev",
-    "license": "",
     "require": {
         "php": ">=5.4.0",
         "nette/di": "^2.3",
@@ -19,9 +14,5 @@
     "autoload": {
         "classmap": ["src/"]
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1.x-dev"
-        }
-    }
+    "minimum-stability": "dev"
 }
