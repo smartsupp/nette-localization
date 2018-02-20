@@ -1,5 +1,6 @@
 {
     "name": "smartsupp/localization",
+    "version": "0.1.3",
     "description" : "Localization loader for nette",
     "authors": [{
         "name": "Dusan Kmet",
