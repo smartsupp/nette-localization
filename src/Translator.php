@@ -4,11 +4,8 @@ namespace Smartsupp\Localization;
 
 use Nette;
 
-class Translator extends Nette\Object implements ITranslator
+class Translator implements ITranslator
 {
-
-	/** @var callable[] */
-	public $onMiss;
 
 	/** @var boolean */
 	public $debugMode = false;
@@ -58,9 +55,6 @@ class Translator extends Nette\Object implements ITranslator
 			$message = $this->dictionary[$key];
 		} else {
 			$message = $key;
-			if ($this->debugMode) {
-				$this->onMiss($message);
-			}
 		}
 		if ($arg !== null) {
 			if (is_array($arg)) {
