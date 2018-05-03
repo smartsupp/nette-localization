@@ -4,7 +4,7 @@ namespace Smartsupp\Localization;
 
 use Nette;
 
-class TranslatorFactory extends Nette\Object
+class TranslatorFactory
 {
 
 	/** @var boolean */
