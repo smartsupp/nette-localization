@@ -2,8 +2,6 @@
 
 namespace Smartsupp\Localization;
 
-use Nette;
-
 class Translator implements ITranslator
 {
 
@@ -11,16 +9,15 @@ class Translator implements ITranslator
 	public $debugMode = false;
 
 	/** @var array  translation table */
-	private $dictionary = array();
-
-
+	private $dictionary = [];
 
 
 	/**
 	 * Set dictionary
 	 * @param array $dictionary
 	 */
-	public function setTranslates(array $dictionary) {
+	public function setTranslates(array $dictionary)
+	{
 		$this->dictionary = $dictionary;
 	}
 
@@ -29,7 +26,8 @@ class Translator implements ITranslator
 	 * Returns translates
 	 * @return string[]
 	 */
-	public function getTranslates() {
+	public function getTranslates()
+	{
 		return $this->dictionary;
 	}
 
@@ -39,7 +37,8 @@ class Translator implements ITranslator
 	 * @param string $key
 	 * @return bool
 	 */
-	public function hasMessage($key) {
+	public function hasMessage($key)
+	{
 		return isset($this->dictionary[$key]);
 	}
 
@@ -50,16 +49,17 @@ class Translator implements ITranslator
 	 * @param  mixed $arg argument (first of arguments)
 	 * @return string
 	 */
-	public function translate($key, $arg = NULL) {
+	public function translate($key, $arg = null)
+	{
 		if (isset($this->dictionary[$key])) {
 			$message = $this->dictionary[$key];
 		} else {
-			$message = $key;
+			$message = '|' . $key . '|';
 		}
 		if ($arg !== null) {
 			if (is_array($arg)) {
-				foreach($arg as $name=>$value) {
-					$message = str_replace('{'.$name.'}', $value, $message);
+				foreach ($arg as $name => $value) {
+					$message = str_replace('{' . $name . '}', $value, $message);
 				}
 				return $message;
 			} else {
