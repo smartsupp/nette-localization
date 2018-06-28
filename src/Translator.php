@@ -53,8 +53,10 @@ class Translator implements ITranslator
 	{
 		if (isset($this->dictionary[$key])) {
 			$message = $this->dictionary[$key];
-		} else {
+		} elseif (preg_match('/^(\w+\.)+\w+$/', $key)) {
 			$message = '|' . $key . '|';
+		} else {
+			$message = $key;
 		}
 		if ($arg !== null) {
 			if (is_array($arg)) {
