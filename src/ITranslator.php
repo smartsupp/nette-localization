@@ -9,4 +9,8 @@ interface ITranslator extends \Nette\Localization\ITranslator
 
 	function getTranslates();
 
+	function setParameters(array $parameters);
+
+	function getParameters();
+
 }

@@ -11,6 +11,9 @@ class Translator implements ITranslator
 	/** @var array  translation table */
 	private $dictionary = [];
 
+	/** @var array */
+	private $parameters = [];
+
 
 	/**
 	 * Set dictionary
@@ -29,6 +32,24 @@ class Translator implements ITranslator
 	public function getTranslates()
 	{
 		return $this->dictionary;
+	}
+
+
+	/**
+	 * @param array $parameters
+	 */
+	public function setParameters(array $parameters)
+	{
+		$this->parameters = array_merge($this->parameters, $parameters);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getParameters()
+	{
+		return $this->parameters;
 	}
 
 
@@ -58,20 +79,26 @@ class Translator implements ITranslator
 		} else {
 			$message = $key;
 		}
+
 		if ($arg !== null) {
 			if (is_array($arg)) {
 				foreach ($arg as $name => $value) {
 					$message = str_replace('{' . $name . '}', $value, $message);
 				}
-				return $message;
 			} else {
 				$args = func_get_args();
 				array_shift($args);
-				return vsprintf($message, $args);
+				$message = vsprintf($message, $args);
 			}
-		} else {
-			return $message;
 		}
+
+		return preg_replace_callback('/\{([^}]+)\}/', function($matches) {
+			if (isset($this->parameters[$matches[1]])) {
+				return $this->parameters[$matches[1]];
+			} else {
+				return $matches[1];
+			}
+		}, $message);
 	}
 
 }

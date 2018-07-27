@@ -12,6 +12,7 @@ class LocalizationExtension extends CompilerExtension
 		'debugMode' => null,
 		'sections' => null,
 		'alias' => null,
+		'parameters' => [],
 	);
 
 	private $tempDir;
@@ -41,7 +42,8 @@ class LocalizationExtension extends CompilerExtension
 
 		$translatorFactory = $container->addDefinition($this->prefix('translatorFactory'))
 			->setClass('Smartsupp\Localization\TranslatorFactory')
-			->addSetup('$debugMode', array($debugMode));
+			->addSetup('$debugMode', array($debugMode))
+			->addSetup('setParameters', array($config['parameters']));
 
 		if ($config['sections']) {
 			$translatorFactory->addSetup('$defaultSections', array($config['sections']));
