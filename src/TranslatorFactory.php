@@ -2,8 +2,6 @@
 
 namespace Smartsupp\Localization;
 
-use Nette;
-
 class TranslatorFactory
 {
 
@@ -11,13 +9,16 @@ class TranslatorFactory
 	public $debugMode = false;
 
 	/** @var array */
-	public $alias = array();
+	public $alias = [];
 
 	/** @var string Used as defaults */
 	public $defaultLang = 'en';
 
 	/** @var array Global sections, added to each translator */
-	public $defaultSections = array();
+	public $defaultSections = [];
+
+	/** @var array */
+	private $parameters = [];
 
 	/** @var TranslatesLoader */
 	private $loader;
@@ -26,7 +27,8 @@ class TranslatorFactory
 	/**
 	 * @param TranslatesLoader $loader
 	 */
-	public function __construct(TranslatesLoader $loader) {
+	public function __construct(TranslatesLoader $loader)
+	{
 		$this->loader = $loader;
 	}
 
@@ -36,8 +38,18 @@ class TranslatorFactory
 	 * @param string $from
 	 * @param string $to
 	 */
-	public function setAlias($from, $to) {
+	public function setAlias($from, $to)
+	{
 		$this->alias[$from] = $to;
+	}
+
+
+	/**
+	 * @param array $parameters
+	 */
+	public function setParameters(array $parameters)
+	{
+		$this->parameters = array_merge($this->parameters, $parameters);
 	}
 
 
@@ -46,19 +58,21 @@ class TranslatorFactory
 	 * @param array $sections
 	 * @return Translator
 	 */
-	public function create($lang, array $sections = array()) {
+	public function create($lang, array $sections = [])
+	{
 		$translator = new Translator();
 		$translator->debugMode = $this->debugMode;
+		$translator->setParameters($this->parameters);
 
-		if(isset($this->alias[$lang])) {
+		if (isset($this->alias[$lang])) {
 			$lang = $this->alias[$lang];
 		}
 
-		$translates = array();
-		foreach($this->defaultSections as $section) {
+		$translates = [];
+		foreach ($this->defaultSections as $section) {
 			$translates += $this->loader->loadTranslates($section, $lang, $this->getDefaultLang($section, $lang));
 		}
-		foreach($sections as $section) {
+		foreach ($sections as $section) {
 			$translates += $this->loader->loadTranslates($section, $lang, $this->getDefaultLang($section, $lang));
 		}
 		$translator->setTranslates($translates);
@@ -73,7 +87,8 @@ class TranslatorFactory
 	 * @param string $lang
 	 * @return string
 	 */
-	protected function getDefaultLang($section, $lang) {
+	protected function getDefaultLang($section, $lang)
+	{
 		return $this->defaultLang;
 	}
 

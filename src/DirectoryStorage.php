@@ -24,7 +24,7 @@ class DirectoryStorage implements ITranslateStorage
 	{
 		$path = $this->dir . '/' . $section . '/' . $lang . '.json';
 		if (is_file($path)) {
-			$translates = array();
+			$translates = [];
 			$data = json_decode(file_get_contents($path), true);
 			$data = array_filter($data, function ($value) {
 				return $value !== '';
@@ -32,7 +32,7 @@ class DirectoryStorage implements ITranslateStorage
 			$this->expandKeys($translates, $data);
 			return $translates;
 		} else {
-			return array();
+			return [];
 		}
 	}
 
