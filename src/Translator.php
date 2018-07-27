@@ -92,7 +92,7 @@ class Translator implements ITranslator
 			}
 		}
 
-		return preg_replace_callback('/\{([^}]+)\}/', function($matches) {
+		return preg_replace_callback('/\{([^}]+)\}/', function ($matches) {
 			if (isset($this->parameters[$matches[1]])) {
 				return $this->parameters[$matches[1]];
 			} else {

@@ -7,13 +7,13 @@ use Nette\DI\CompilerExtension;
 class LocalizationExtension extends CompilerExtension
 {
 
-	public $defaults = array(
+	public $defaults = [
 		'translatesDir' => null,
 		'debugMode' => null,
 		'sections' => null,
 		'alias' => null,
 		'parameters' => [],
-	);
+	];
 
 	private $tempDir;
 
@@ -33,24 +33,24 @@ class LocalizationExtension extends CompilerExtension
 
 		$container->addDefinition($this->prefix('translatesStorage'))
 			->setClass('Smartsupp\Localization\DirectoryStorage')
-			->setArguments(array($config['translatesDir']));
+			->setArguments([$config['translatesDir']]);
 
 		$container->addDefinition($this->prefix('translatesLoader'))
 			->setClass('Smartsupp\Localization\TranslatesLoader')
-			->addSetup('$debugMode', array($debugMode))
-			->addSetup('setTempDir', array($tempDir . '/cache/_Wimo.Localization'));
+			->addSetup('$debugMode', [$debugMode])
+			->addSetup('setTempDir', [$tempDir . '/cache/_Wimo.Localization']);
 
 		$translatorFactory = $container->addDefinition($this->prefix('translatorFactory'))
 			->setClass('Smartsupp\Localization\TranslatorFactory')
-			->addSetup('$debugMode', array($debugMode))
-			->addSetup('setParameters', array($config['parameters']));
+			->addSetup('$debugMode', [$debugMode])
+			->addSetup('setParameters', [$config['parameters']]);
 
 		if ($config['sections']) {
-			$translatorFactory->addSetup('$defaultSections', array($config['sections']));
+			$translatorFactory->addSetup('$defaultSections', [$config['sections']]);
 		}
 		if ($config['alias']) {
 			foreach ($config['alias'] as $from => $to) {
-				$translatorFactory->addSetup('setAlias', array($from, $to));
+				$translatorFactory->addSetup('setAlias', [$from, $to]);
 			}
 		}
 	}
