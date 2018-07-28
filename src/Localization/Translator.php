@@ -67,10 +67,10 @@ class Translator implements ITranslator
 	/**
 	 * Translates the given string. NEPODPORUJE PLURAL
 	 * @param  string $key translation string
-	 * @param  mixed $arg argument (first of arguments)
+	 * @param  mixed $args argument (first of arguments)
 	 * @return string
 	 */
-	public function translate($key, $arg = null)
+	public function translate($key, $args = null)
 	{
 		if (isset($this->dictionary[$key])) {
 			$message = $this->dictionary[$key];
@@ -80,11 +80,11 @@ class Translator implements ITranslator
 			$message = $key;
 		}
 
-		if ($arg !== null) {
-			if (is_array($arg)) {
-				foreach ($arg as $name => $value) {
-					$message = str_replace('{' . $name . '}', $value, $message);
-				}
+		if ($args !== null) {
+			if (is_array($args)) {
+				$message = preg_replace_callback('/\{([^}]+)\}/', function ($matches) use ($args) {
+					return array_key_exists($matches[1], $args) ? $args[$matches[1]] : $matches[0];
+				}, $message);
 			} else {
 				$args = func_get_args();
 				array_shift($args);
@@ -92,13 +92,23 @@ class Translator implements ITranslator
 			}
 		}
 
+		return $this->replaceParameters($message);
+	}
+
+
+	private function replaceParameters($string)
+	{
+		if (strpos($string, '{') === false) {
+			return $string;
+		}
 		return preg_replace_callback('/\{([^}]+)\}/', function ($matches) {
-			if (isset($this->parameters[$matches[1]])) {
-				return $this->parameters[$matches[1]];
+			if (!isset($this->parameters[$matches[1]])) {
+				return $matches[0];
 			} else {
-				return $matches[1];
+				// TODO: prevent cyclic replacing
+				return $this->replaceParameters($this->parameters[$matches[1]]);
 			}
-		}, $message);
+		}, $string);
 	}
 
 }

@@ -62,6 +62,8 @@ class TranslatorFactory
 	{
 		$translator = new Translator();
 		$translator->debugMode = $this->debugMode;
+
+		$translator->setParameters(['lang' => $lang]);
 		$translator->setParameters($this->parameters);
 
 		if (isset($this->alias[$lang])) {
