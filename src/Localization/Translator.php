@@ -2,17 +2,19 @@
 
 namespace Smartsupp\Localization;
 
+use Nette\Utils\Validators;
+
 class Translator implements ITranslator
 {
-
-	/** @var boolean */
-	public $debugMode = false;
 
 	/** @var array  translation table */
 	private $dictionary = [];
 
 	/** @var array */
 	private $parameters = [];
+
+	/** @var array */
+	private $filters = [];
 
 
 	/**
@@ -50,6 +52,18 @@ class Translator implements ITranslator
 	public function getParameters()
 	{
 		return $this->parameters;
+	}
+
+
+	/**
+	 * @param callable $filter
+	 */
+	public function addFilter($filter)
+	{
+		if (!Validators::isCallable($filter)) {
+			throw new \Nette\Utils\AssertionException("Filter is not callable");
+		}
+		$this->filters[] = $filter;
 	}
 
 
@@ -92,11 +106,19 @@ class Translator implements ITranslator
 			}
 		}
 
-		return $this->replaceParameters($message);
+		if (count($this->parameters) > 0) {
+			$message = $this->applyParameters($message);
+		}
+
+		foreach ($this->filters as $filter) {
+			$message = call_user_func_array($filter, [$message, $key]);
+		}
+
+		return $message;
 	}
 
 
-	private function replaceParameters($string)
+	private function applyParameters($string)
 	{
 		if (strpos($string, '{') === false) {
 			return $string;
@@ -105,8 +127,7 @@ class Translator implements ITranslator
 			if (!isset($this->parameters[$matches[1]])) {
 				return $matches[0];
 			} else {
-				// TODO: prevent cyclic replacing
-				return $this->replaceParameters($this->parameters[$matches[1]]);
+				return $this->applyParameters($this->parameters[$matches[1]]);
 			}
 		}, $string);
 	}

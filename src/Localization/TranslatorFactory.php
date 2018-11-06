@@ -2,11 +2,10 @@
 
 namespace Smartsupp\Localization;
 
+use Nette\Utils\Validators;
+
 class TranslatorFactory
 {
-
-	/** @var boolean */
-	public $debugMode = false;
 
 	/** @var array */
 	public $alias = [];
@@ -19,6 +18,9 @@ class TranslatorFactory
 
 	/** @var array */
 	private $parameters = [];
+
+	/** @var array */
+	private $filters = [];
 
 	/** @var TranslatesLoader */
 	private $loader;
@@ -54,6 +56,18 @@ class TranslatorFactory
 
 
 	/**
+	 * @param callable $filter
+	 */
+	public function addFilter($filter)
+	{
+		if (!Validators::isCallable($filter)) {
+			throw new \Nette\Utils\AssertionException("Filter is not callable");
+		}
+		$this->filters[] = $filter;
+	}
+
+
+	/**
 	 * @param string $lang
 	 * @param array $sections
 	 * @return Translator
@@ -61,10 +75,11 @@ class TranslatorFactory
 	public function create($lang, array $sections = [])
 	{
 		$translator = new Translator();
-		$translator->debugMode = $this->debugMode;
-
 		$translator->setParameters(['lang' => $lang]);
 		$translator->setParameters($this->parameters);
+		foreach ($this->filters as $filter) {
+			$translator->addFilter($filter);
+		}
 
 		if (isset($this->alias[$lang])) {
 			$lang = $this->alias[$lang];
