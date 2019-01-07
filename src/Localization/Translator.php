@@ -84,7 +84,7 @@ class Translator implements ITranslator
 	 * @param  mixed $args argument (first of arguments)
 	 * @return string
 	 */
-	public function translate($key, $args = null)
+	public function translate($key, ...$args): string
 	{
 		if (isset($this->dictionary[$key])) {
 			$message = $this->dictionary[$key];
@@ -94,16 +94,12 @@ class Translator implements ITranslator
 			$message = $key;
 		}
 
-		if ($args !== null) {
-			if (is_array($args)) {
-				$message = preg_replace_callback('/\{([^}]+)\}/', function ($matches) use ($args) {
-					return array_key_exists($matches[1], $args) ? $args[$matches[1]] : $matches[0];
-				}, $message);
-			} else {
-				$args = func_get_args();
-				array_shift($args);
-				$message = vsprintf($message, $args);
-			}
+		if (count($args) === 1 && is_array($args[0])) {
+			$message = preg_replace_callback('/\{([^}]+)\}/', function ($matches) use ($args) {
+				return $args[0][$matches[1]] ?? $matches[0];
+			}, $message);
+		} elseif (count($args) > 0) {
+			$message = vsprintf($message, $args);
 		}
 
 		if (count($this->parameters) > 0) {

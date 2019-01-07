@@ -22,21 +22,21 @@ class LocalizationExtension extends CompilerExtension
 	public function loadConfiguration()
 	{
 		$container = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->validateConfig($this->defaults);
 
 		Validators::assertField($config, 'translatesDir', 'string');
 
 		$container->addDefinition($this->prefix('translatesStorage'))
-			->setClass(DirectoryStorage::class)
+			->setFactory(DirectoryStorage::class)
 			->setArguments([$config['translatesDir']]);
 
 		$container->addDefinition($this->prefix('translatesLoader'))
-			->setClass(TranslatesLoader::class)
+			->setFactory(TranslatesLoader::class)
 			->addSetup('$debugMode', [$config['debugMode']])
 			->addSetup('setTempDir', [$config['tempDir']]);
 
 		$translatorFactory = $container->addDefinition($this->prefix('translatorFactory'))
-			->setClass(TranslatorFactory::class)
+			->setFactory(TranslatorFactory::class)
 			->addSetup('$defaultSections', [$config['sections']])
 			->addSetup('setParameters', [$config['parameters']]);
 
