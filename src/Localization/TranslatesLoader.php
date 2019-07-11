@@ -1,104 +1,53 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
+
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 
 class TranslatesLoader
 {
 
 	/** @var bool */
-	public $debugMode = false;
-
-	/** @var string */
-	private $tempDir;
+	private $debugMode;
 
 	/** @var ITranslateStorage */
 	private $storage;
 
+	/** @var Cache */
+	private $cache;
 
-	public function __construct(ITranslateStorage $storage)
+
+	public function __construct(
+		bool $debugMode,
+		ITranslateStorage $storage,
+		IStorage $cacheStorage
+	)
 	{
+		$this->debugMode = $debugMode;
 		$this->storage = $storage;
+		$this->cache = new Cache($cacheStorage, 'Smartsupp.TranslatesLoader');
 	}
 
 
-	/**
-	 * Set temp dir for cache
-	 * @param string $tempDir Musi byt zapisovatelny
-	 */
-	public function setTempDir($tempDir)
+	public function loadTranslates(string $section, string $lang, ?string $defaultLang = null): array
 	{
-		$this->tempDir = $tempDir;
-	}
-
-
-	/**
-	 * Returns translates storage
-	 * @return ITranslateStorage
-	 */
-	public function getStorage()
-	{
-		return $this->storage;
-	}
-
-
-	/**
-	 * Get translates from cache
-	 * @param string $section
-	 * @param string $lang
-	 * @param string $defaultLang
-	 * @return array
-	 */
-	public function loadTranslates($section, $lang, $defaultLang = null)
-	{
-		$tempDir = $this->tempDir;
-		if (!is_dir($tempDir)) {
-			mkdir($tempDir);
+		$keyParts = [$lang, $section];
+		if ($this->debugMode) {
+			$keyParts[] = $this->getLastChange($section, $lang, $defaultLang);
 		}
 
-		$cachedFile = $tempDir . '/' . $lang . '_' . $section . '.php';
-		if (!$this->debugMode && is_file($cachedFile)) {
-			$translates = include $cachedFile;
-		} else {
-			// create cache
-			$cache = new TranslatesCache();
-			$cache->setTempDir($tempDir);
-			$cache->setFilename($lang . '_' . $section . ($this->debugMode ? '_' . md5($this->getLastChange($section, $lang, $defaultLang)) : '') . '.php');
-			// build or load cached file
-			$translates = $cache->load();
-			if (!$translates) {
-				$cache->save($this->compile($this->getTranslates($section, $lang, $defaultLang)));
-				$translates = $cache->load();
-			}
-		}
-
-		if (is_array($translates)) {
-			return $translates;
-		} else {
-			return [];
-		}
+		$key = implode('_', $keyParts);
+		return $this->cache->load($key, function () use ($section, $lang, $defaultLang): array {
+			return $this->getTranslates($section, $lang, $defaultLang);
+		});
 	}
 
 
-	/**
-	 * Format array into php
-	 * @param array $translates
-	 * @return string
-	 */
-	private function compile(array $translates)
-	{
-		$string = "<?php\nreturn array(\n";
-		foreach ($translates as $from => $to) {
-			$string .= "'$from' => \"" . str_replace('"', '\'', $to) . "\",\n";
-		}
-		$string .= ");";
-		return $string;
-	}
-
-
-	private function getTranslates($section, $lang, $defaultLang = null)
+	private function getTranslates(string $section, string $lang, ?string $defaultLang = null): array
 	{
 		$translates = $this->storage->getTranslates($section, $lang);
-		if ($defaultLang && $defaultLang != $lang) {
+		if ($defaultLang && $defaultLang !== $lang) {
 			$translates = array_merge($this->storage->getTranslates($section, $defaultLang), $translates);
 		}
 		ksort($translates);
@@ -106,13 +55,13 @@ class TranslatesLoader
 	}
 
 
-	private function getLastChange($section, $lang, $defaultLang = null)
+	private function getLastChange(string $section, string $lang, ?string $defaultLang = null): int
 	{
-		if ($defaultLang) {
+		if ($defaultLang !== null) {
 			return max($this->storage->getLastChange($section, $lang), $this->storage->getLastChange($section, $defaultLang));
-		} else {
-			return $this->storage->getLastChange($section, $lang);
 		}
+
+		return $this->storage->getLastChange($section, $lang);
 	}
 
 }
