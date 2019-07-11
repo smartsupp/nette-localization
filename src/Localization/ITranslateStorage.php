@@ -1,24 +1,13 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
 interface ITranslateStorage
 {
 
-	/**
-	 * Get translates for lang
-	 * @param string $section
-	 * @param string $lang
-	 * @return array
-	 */
-	function getTranslates($section, $lang);
+	public function getTranslates(string $section, string $lang): array;
 
 
-	/**
-	 * Get last change
-	 * @param string $section
-	 * @param string $lang
-	 * @return int
-	 */
-	function getLastChange($section, $lang);
+	public function getLastChange(string $section, string $lang): int;
+
 }

@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
+use Nette\Utils\AssertionException;
 use Nette\Utils\Validators;
 
 class TranslatorFactory
@@ -26,9 +27,6 @@ class TranslatorFactory
 	private $loader;
 
 
-	/**
-	 * @param TranslatesLoader $loader
-	 */
 	public function __construct(TranslatesLoader $loader)
 	{
 		$this->loader = $loader;
@@ -37,42 +35,29 @@ class TranslatorFactory
 
 	/**
 	 * Add language alias. If requested "$from" language, returned is translator with "$to" language.
-	 * @param string $from
-	 * @param string $to
 	 */
-	public function setAlias($from, $to)
+	public function setAlias(string $from, string $to): void
 	{
 		$this->alias[$from] = $to;
 	}
 
 
-	/**
-	 * @param array $parameters
-	 */
-	public function setParameters(array $parameters)
+	public function setParameters(array $parameters): void
 	{
 		$this->parameters = array_merge($this->parameters, $parameters);
 	}
 
 
-	/**
-	 * @param callable $filter
-	 */
-	public function addFilter($filter)
+	public function addFilter(callable $filter): void
 	{
 		if (!Validators::isCallable($filter)) {
-			throw new \Nette\Utils\AssertionException("Filter is not callable");
+			throw new AssertionException("Filter is not callable");
 		}
 		$this->filters[] = $filter;
 	}
 
 
-	/**
-	 * @param string $lang
-	 * @param array $sections
-	 * @return Translator
-	 */
-	public function create($lang, array $sections = [])
+	public function create(string $lang, array $sections = []): Translator
 	{
 		$translator = new Translator();
 		$translator->setParameters(['lang' => $lang]);
@@ -87,26 +72,14 @@ class TranslatorFactory
 
 		$translates = [];
 		foreach ($this->defaultSections as $section) {
-			$translates += $this->loader->loadTranslates($section, $lang, $this->getDefaultLang($section, $lang));
+			$translates += $this->loader->loadTranslates($section, $lang, $this->defaultLang);
 		}
 		foreach ($sections as $section) {
-			$translates += $this->loader->loadTranslates($section, $lang, $this->getDefaultLang($section, $lang));
+			$translates += $this->loader->loadTranslates($section, $lang, $this->defaultLang);
 		}
 		$translator->setTranslates($translates);
 
 		return $translator;
-	}
-
-
-	/**
-	 * Returns default language. Can be changed by user.
-	 * @param string $section
-	 * @param string $lang
-	 * @return string
-	 */
-	protected function getDefaultLang($section, $lang)
-	{
-		return $this->defaultLang;
 	}
 
 }

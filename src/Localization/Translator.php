@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
+use Nette\Utils\AssertionException;
 use Nette\Utils\Validators;
 
 class Translator implements ITranslator
@@ -17,62 +18,43 @@ class Translator implements ITranslator
 	private $filters = [];
 
 
-	/**
-	 * Set dictionary
-	 * @param array $dictionary
-	 */
-	public function setTranslates(array $dictionary)
+	public function setTranslates(array $dictionary): void
 	{
 		$this->dictionary = $dictionary;
 	}
 
 
 	/**
-	 * Returns translates
 	 * @return string[]
 	 */
-	public function getTranslates()
+	public function getTranslates(): array
 	{
 		return $this->dictionary;
 	}
 
 
-	/**
-	 * @param array $parameters
-	 */
-	public function setParameters(array $parameters)
+	public function setParameters(array $parameters): void
 	{
 		$this->parameters = array_merge($this->parameters, $parameters);
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getParameters()
+	public function getParameters(): array
 	{
 		return $this->parameters;
 	}
 
 
-	/**
-	 * @param callable $filter
-	 */
-	public function addFilter($filter)
+	public function addFilter(callable $filter): void
 	{
 		if (!Validators::isCallable($filter)) {
-			throw new \Nette\Utils\AssertionException("Filter is not callable");
+			throw new AssertionException("Filter is not callable");
 		}
 		$this->filters[] = $filter;
 	}
 
 
-	/**
-	 * Has message?
-	 * @param string $key
-	 * @return bool
-	 */
-	public function hasMessage($key)
+	public function hasMessage(string $key): bool
 	{
 		return isset($this->dictionary[$key]);
 	}
@@ -118,17 +100,13 @@ class Translator implements ITranslator
 	}
 
 
-	private function applyParameters($string)
+	private function applyParameters(string $string): string
 	{
 		if (strpos($string, '{') === false) {
 			return $string;
 		}
 		return preg_replace_callback('/\{([^}]+)\}/', function ($matches) {
-			if (!isset($this->parameters[$matches[1]])) {
-				return $matches[0];
-			} else {
-				return $this->applyParameters($this->parameters[$matches[1]]);
-			}
+			return isset($this->parameters[$matches[1]]) ? $this->applyParameters($this->parameters[$matches[1]]) : $matches[0];
 		}, $string);
 	}
 
