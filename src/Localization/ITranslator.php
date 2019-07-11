@@ -1,19 +1,19 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
 interface ITranslator extends \Nette\Localization\ITranslator
 {
 
-	function setTranslates(array $dictionary);
+	public function setTranslates(array $dictionary): void;
 
 
-	function getTranslates();
+	public function getTranslates(): array;
 
 
-	function setParameters(array $parameters);
+	public function setParameters(array $parameters): void;
 
 
-	function getParameters();
+	public function getParameters(): array;
 
 }

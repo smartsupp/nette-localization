@@ -1,66 +1,48 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
 class DirectoryStorage implements ITranslateStorage
 {
 
+	/** @var string */
 	private $dir;
 
 
-	public function __construct($dir)
+	public function __construct(string $dir)
 	{
 		$this->dir = $dir;
 	}
 
 
-	/**
-	 * Get translates for lang
-	 * @param string $section
-	 * @param string $lang
-	 * @return array
-	 */
-	public function getTranslates($section, $lang)
+	public function getTranslates(string $section, string $lang): array
 	{
 		$path = $this->dir . '/' . $section . '/' . $lang . '.json';
-		if (is_file($path)) {
-			$translates = [];
-			$data = json_decode(file_get_contents($path), true);
-			$data = array_filter($data, function ($value) {
-				return $value !== '';
-			});
-			$this->expandKeys($translates, $data);
-			return $translates;
-		} else {
+		if (!is_file($path)) {
 			return [];
 		}
+
+		$translates = [];
+		$data = json_decode(file_get_contents($path), true);
+		$data = array_filter($data, function ($value) {
+			return $value !== '';
+		});
+		$this->expandKeys($translates, $data);
+		return $translates;
 	}
 
 
-	/**
-	 * Get last change
-	 * @param string $section
-	 * @param string $lang
-	 * @return int
-	 */
-	public function getLastChange($section, $lang)
+	public function getLastChange(string $section, string $lang): int
 	{
 		$path = $this->dir . '/' . $section . '/' . $lang . '.json';
-		if (is_file($path)) {
-			return filemtime($path);
-		} else {
-			return 0;
-		}
+		return is_file($path) ? filemtime($path) : 0;
 	}
 
 
 	/**
 	 * Expand structured translates
-	 * @param array $translates
-	 * @param array $data
-	 * @param string $prefix
 	 */
-	private function expandKeys(array &$translates, array $data, $prefix = null)
+	private function expandKeys(array &$translates, array $data, ?string $prefix = null): void
 	{
 		foreach ($data as $key => $value) {
 			if (is_array($value)) {

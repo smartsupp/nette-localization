@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Smartsupp\Localization;
 
@@ -19,7 +19,7 @@ class LocalizationExtension extends CompilerExtension
 	];
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$container = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
@@ -27,16 +27,13 @@ class LocalizationExtension extends CompilerExtension
 		Validators::assertField($config, 'translatesDir', 'string');
 
 		$container->addDefinition($this->prefix('translatesStorage'))
-			->setClass(DirectoryStorage::class)
-			->setArguments([$config['translatesDir']]);
+			->setFactory(DirectoryStorage::class, [$config['translatesDir']]);
 
 		$container->addDefinition($this->prefix('translatesLoader'))
-			->setClass(TranslatesLoader::class)
-			->addSetup('$debugMode', [$config['debugMode']])
-			->addSetup('setTempDir', [$config['tempDir']]);
+			->setFactory(TranslatesLoader::class, [$config['debugMode']]);
 
 		$translatorFactory = $container->addDefinition($this->prefix('translatorFactory'))
-			->setClass(TranslatorFactory::class)
+			->setFactory(TranslatorFactory::class)
 			->addSetup('$defaultSections', [$config['sections']])
 			->addSetup('setParameters', [$config['parameters']]);
 
