@@ -6,7 +6,7 @@
         "email": "morlokdk@gmail.com"
     }],
     "require": {
-        "php": ">=7.1",
+        "php": "^7.1",
         "ext-json": "*",
         "nette/caching": "^3.0",
         "nette/safe-stream": "^2.4",
