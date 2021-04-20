@@ -6,14 +6,13 @@
         "email": "morlokdk@gmail.com"
     }],
     "require": {
-        "php": "^7.1",
+        "php": ">=7.1",
         "ext-json": "*",
         "nette/caching": "^3.0",
-        "nette/safe-stream": "^2.4",
         "nette/utils": "^3.0"
     },
     "require-dev": {
-        "nette/di": "^2.4",
+        "nette/di": "^2.4 || ^3.0",
         "nette/tester": "^2.0",
         "tracy/tracy": "^2.4"
     },
