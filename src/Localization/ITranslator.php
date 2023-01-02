@@ -2,7 +2,7 @@
 
 namespace Smartsupp\Localization;
 
-interface ITranslator extends \Nette\Localization\ITranslator
+interface ITranslator extends \Nette\Localization\Translator
 {
 
 	public function setTranslates(array $dictionary): void;
