@@ -9,7 +9,7 @@
         "php": ">=7.1",
         "ext-json": "*",
         "nette/caching": "^3.0",
-        "nette/utils": "^3.0"
+        "nette/utils": "^3.2"
     },
     "require-dev": {
         "nette/di": "^2.4 || ^3.0",
