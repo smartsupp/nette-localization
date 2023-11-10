@@ -69,7 +69,7 @@ class Translator implements ITranslator
 	{
 		if (isset($this->dictionary[$key])) {
 			$message = $this->dictionary[$key];
-		} elseif (preg_match('/^([A-Za-z]\w+\.)+\w+$/', $key)) {
+		} elseif ($key && preg_match('/^([A-Za-z]\w+\.)+\w+$/', $key)) {
 			$message = '|' . $key . '|';
 		} else {
 			$message = $key;
